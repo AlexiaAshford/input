@@ -26,8 +26,8 @@ To use the User Input Utility in your project, follow these steps:
 
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/yourusername/user-input-utility.git
-   cd user-input-utility
+   git clone https://github.com/AlexiaVeronica/input.git
+   cd input
    ```
 
 2. **Install Dependencies**:
@@ -50,7 +50,7 @@ package main
 
 import (
 	"fmt"
-	"input"
+	"github.com/AlexiaVeronica/input"
 )
 
 func main() {
