@@ -19,71 +19,55 @@ func ReadInput(prompt string) (string, error) {
 	return strings.TrimSpace(input), nil
 }
 
-func InputInt(prompt string) int {
+func parseInput[T any](prompt string, parseFunc func(string) (T, error), errMsg string) T {
 	for {
 		input, err := ReadInput(prompt)
 		if err != nil {
 			fmt.Println("Error reading input, please try again.")
 			continue
 		}
-		number, err := strconv.Atoi(input)
+		value, err := parseFunc(input)
 		if err != nil {
-			fmt.Println("Invalid input, please enter a valid number.")
+			fmt.Println(errMsg)
 			continue
 		}
-		return number
+		return value
 	}
 }
 
-func InputString(prompt string) string {
-	for {
-		input, err := ReadInput(prompt)
-		if err != nil {
-			fmt.Println("Error reading input, please try again.")
-			continue
-		}
-		return input
-	}
+func IntInput(prompt string) int {
+	return parseInput(prompt, strconv.Atoi, "Invalid input, please enter a valid number.")
 }
 
-func InputFloat(prompt string) float64 {
-	for {
-		input, err := ReadInput(prompt)
-		if err != nil {
-			fmt.Println("Error reading input, please try again.")
-			continue
-		}
-		number, err := strconv.ParseFloat(input, 64)
-		if err != nil {
-			fmt.Println("Invalid input, please enter a valid number.")
-			continue
-		}
-		return number
-	}
+func StringInput(prompt string) string {
+	return parseInput(prompt, func(input string) (string, error) { return input, nil }, "Error reading input, please try again.")
 }
 
-func InputBool(prompt string) bool {
-	for {
-		input, err := ReadInput(prompt)
-		if err != nil {
-			fmt.Println("Error reading input, please try again.")
-			continue
-		}
+func FloatInput(prompt string) float64 {
+	return parseInput(prompt, func(input string) (float64, error) { return strconv.ParseFloat(input, 64) }, "Invalid input, please enter a valid number.")
+}
+
+func BoolInput(prompt string) bool {
+	return parseInput(prompt, func(input string) (bool, error) {
 		lowerInput := strings.ToLower(input)
 		if lowerInput == "y" || lowerInput == "true" {
-			return true
+			return true, nil
 		} else if lowerInput == "n" || lowerInput == "false" {
-			return false
-		} else {
-			fmt.Println("Invalid input, please enter y or n.")
+			return false, nil
 		}
-	}
+		return false, fmt.Errorf("invalid input")
+	}, "Invalid input, please enter y or n.")
 }
 
-func main() {
-	// Example usage
-	fmt.Println("InputInt:", InputInt("Enter an integer: "))
-	fmt.Println("InputString:", InputString("Enter a string: "))
-	fmt.Println("InputFloat:", InputFloat("Enter a float: "))
-	fmt.Println("InputBool:", InputBool("Enter a boolean (y/n): "))
+func Int64Input(prompt string) int64 {
+	return parseInput(prompt, func(input string) (int64, error) {
+		return strconv.ParseInt(input, 10, 64)
+	}, "Invalid input, please enter a valid number.")
+}
+
+func UintInput(prompt string) uint {
+	return parseInput(prompt, func(input string) (uint, error) {
+		value, err := strconv.ParseUint(input, 10, 64)
+		return uint(value), err
+	}, "Invalid input, please enter a valid number.")
 }
